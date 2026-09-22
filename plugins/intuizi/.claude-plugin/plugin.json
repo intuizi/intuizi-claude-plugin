@@ -1,0 +1,19 @@
+{
+  "name": "intuizi",
+  "description": "Build, size and activate privacy-safe audiences on the Intuizi data platform: reference lookups, audience estimates and builds, lookalike models, cohorts and activations.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Intuizi, Inc.",
+    "email": "support@intuizi.com",
+    "url": "https://www.intuizi.com"
+  },
+  "homepage": "https://www.intuizi.com/mcp/",
+  "license": "MIT",
+  "keywords": [
+    "audiences",
+    "advertising",
+    "analytics",
+    "activation",
+    "intuizi"
+  ]
+}
