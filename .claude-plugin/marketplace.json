@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "intuizi",
-  "description": "Official Claude plugins from Intuizi, the privacy-safe audience platform.",
+  "description": "Official Claude plugins from Intuizi, for privacy-safe audiences built from real-world behavior.",
   "owner": {
     "name": "Intuizi, Inc.",
     "email": "support@intuizi.com"
@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "intuizi",
-      "description": "Build, size and activate privacy-safe audiences on the Intuizi data platform: reference lookups, audience estimates and builds, lookalike models, cohorts and activations.",
+      "description": "Build, size and activate privacy-safe audiences from real-world behavior with Intuizi's Large Behavioral Model: reference lookups, audience estimates and builds, lookalike models, cohorts and activations.",
       "author": {
         "name": "Intuizi, Inc."
       },
