@@ -1,8 +1,9 @@
 # Intuizi
 
-Connects Claude to the [Intuizi](https://www.intuizi.com) data platform, where brands, agencies
-and publishers turn de-identified signal data into audiences and deliver them to their marketing
-destinations.
+Connects Claude to the Large Behavioral Model, [Intuizi](https://www.intuizi.com)'s flagship large
+quantitative model (LQM), trained on de-identified, real-world behavioral signals. Brands, agencies
+and publishers use it to build audiences from real-world behavior, size them, and deliver them to
+their marketing destinations.
 
 ## What you get
 

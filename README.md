@@ -1,8 +1,9 @@
 # Intuizi plugins for Claude
 
-The official Claude plugin for [Intuizi](https://www.intuizi.com), the platform where brands,
-agencies and publishers turn de-identified signal data into audiences and deliver them to their
-marketing destinations.
+The official Claude plugin for [Intuizi](https://www.intuizi.com) and its Large Behavioral Model,
+Intuizi's flagship large quantitative model (LQM), trained on de-identified, real-world behavioral
+signals. Brands, agencies and publishers use it to build audiences from real-world behavior, size
+them, and deliver them to their marketing destinations.
 
 ## Install
 
