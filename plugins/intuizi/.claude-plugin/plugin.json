@@ -8,6 +8,8 @@
     "url": "https://www.intuizi.com"
   },
   "homepage": "https://www.intuizi.com/mcp/",
+  "privacyPolicyUrl": "https://www.intuizi.com/private-policy/",
+  "icon": "./assets/icon.png",
   "license": "MIT",
   "keywords": [
     "audiences",
