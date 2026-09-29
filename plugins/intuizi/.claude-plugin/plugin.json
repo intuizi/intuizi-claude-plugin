@@ -1,21 +1,31 @@
 {
   "name": "intuizi",
-  "description": "Build, size and activate privacy-safe audiences from real-world behavior with Intuizi's Large Behavioral Model: reference lookups, audience estimates and builds, lookalike models, cohorts and activations.",
-  "version": "1.0.0",
+  "displayName": "Intuizi",
+  "description": "Query the Large Behavioral Model, Intuizi's flagship large quantitative model (LQM), trained on de-identified, real-world behavioral signals. Build, size and deliver audiences to your marketing destinations.",
+  "version": "1.0.1",
   "author": {
     "name": "Intuizi, Inc.",
     "email": "support@intuizi.com",
     "url": "https://www.intuizi.com"
   },
-  "homepage": "https://www.intuizi.com/mcp/",
+  "homepage": "https://www.intuizi.com",
+  "documentationUrl": "https://www.intuizi.com/mcp/",
+  "supportUrl": "https://www.intuizi.com/contact-us/",
+  "repository": "https://github.com/intuizi/intuizi-claude-plugin",
   "privacyPolicyUrl": "https://www.intuizi.com/private-policy/",
+  "termsOfServiceUrl": "https://www.intuizi.com/terms/",
   "icon": "./assets/icon.png",
   "license": "MIT",
   "keywords": [
+    "intuizi",
+    "large-behavioral-model",
+    "large-quantitative-model",
+    "lqm",
+    "behavioral-signals",
+    "de-identified",
     "audiences",
-    "advertising",
-    "analytics",
+    "audience-sizing",
     "activation",
-    "intuizi"
+    "marketing"
   ]
 }
