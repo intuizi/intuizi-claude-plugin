@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "intuizi",
-      "description": "Build, size and activate privacy-safe audiences from real-world behavior with Intuizi's Large Behavioral Model: reference lookups, audience estimates and builds, lookalike models, cohorts and activations.",
+      "description": "Query the Large Behavioral Model, Intuizi's flagship large quantitative model (LQM), trained on de-identified, real-world behavioral signals. Build, size and deliver audiences to your marketing destinations.",
       "author": {
         "name": "Intuizi, Inc."
       },
