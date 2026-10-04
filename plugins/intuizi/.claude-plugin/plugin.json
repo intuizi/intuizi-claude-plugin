@@ -2,7 +2,7 @@
   "name": "intuizi",
   "displayName": "Intuizi",
   "description": "Query the Large Behavioral Model, Intuizi's flagship large quantitative model (LQM), trained on de-identified, real-world behavioral signals. Build, size and deliver audiences to your marketing destinations.",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": {
     "name": "Intuizi, Inc.",
     "email": "support@intuizi.com",
@@ -10,10 +10,10 @@
   },
   "homepage": "https://www.intuizi.com",
   "documentationUrl": "https://www.intuizi.com/mcp/",
-  "supportUrl": "https://www.intuizi.com/contact-us/",
+  "supportUrl": "https://www.intuizi.com/contact/",
   "repository": "https://github.com/intuizi/intuizi-claude-plugin",
-  "privacyPolicyUrl": "https://www.intuizi.com/private-policy/",
-  "termsOfServiceUrl": "https://www.intuizi.com/terms/",
+  "privacyPolicyUrl": "https://www.intuizi.com/legal/privacy-policy/",
+  "termsOfServiceUrl": "https://www.intuizi.com/legal/terms-and-conditions/",
   "icon": "./assets/icon.png",
   "license": "MIT",
   "keywords": [
