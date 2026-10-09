@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """Validate the ChatGPT plugin package and build the ZIP to upload to OpenAI.
 
-The package is plugins/intuizi/.codex-plugin/plugin.json plus the icon files it
-references. The ZIP holds exactly those files. The Claude files in the same
-folder (.claude-plugin/, .mcp.json, README.md, skills/) never reach OpenAI, so
-OpenAI's default component discovery cannot pick anything up by accident.
+The package is plugins/intuizi/.codex-plugin/plugin.json, the icon files it
+references, and the MCP server declaration, which the ZIP carries as .mcp.json
+but which comes from .codex-plugin/mcp.json: the root .mcp.json in this folder
+belongs to the Claude plugin and uses Claude's format. The ZIP holds exactly
+those files. The Claude files (.claude-plugin/, .mcp.json, README.md, skills/)
+never reach OpenAI, so OpenAI's default component discovery cannot pick anything
+up by accident.
 
 The script checks every field this package uses against OpenAI's rules and
 refuses all other fields, so no unchecked field can reach an upload. Add a
@@ -39,6 +42,10 @@ PLUGIN_ROOT = REPO_ROOT / "plugins" / "intuizi"
 MANIFEST = ".codex-plugin/plugin.json"
 # Both listings carry one version: the Claude manifest and MANIFEST must agree.
 CLAUDE_MANIFEST = ".claude-plugin/plugin.json"
+# OpenAI's declaration of the plugin's MCP server, packed as .mcp.json. The update
+# flow cannot change the server URL, so it is pinned here.
+MCP_SOURCE = ".codex-plugin/mcp.json"
+MCP_URL = "https://console.intuizi.com/api/v2/mcp"
 
 # OpenAI assigned this package name when the plugin was first published, and an
 # update must keep it.
@@ -61,7 +68,7 @@ MAX_IMAGE_BYTES = 5 * 1024 * 1024
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 
 # The fields this script checks. Every other field is refused.
-TOP_LEVEL_FIELDS = {"name", "version", "description", "author", "interface", "extensions"}
+TOP_LEVEL_FIELDS = {"name", "version", "description", "author", "mcpServers", "interface", "extensions"}
 AUTHOR_FIELDS = {"name", "email", "url"}
 INTERFACE_FIELDS = {
     "displayName", "shortDescription", "longDescription", "developerName", "category",
@@ -70,9 +77,6 @@ INTERFACE_FIELDS = {
 
 # Fields refused for a reason of their own.
 REFUSED = {
-    "mcpServers": "the MCP server is connected in the OpenAI dashboard, and OpenAI's export of "
-                  "version 1.0.0 declares none. The update flow cannot change an MCP server URL, and "
-                  "the .mcp.json in this folder uses Claude's format, which OpenAI rejects",
     "apps": "OpenAI does not accept app references (apps, .app.json) in a ZIP for the plugin directory",
     "hooks": "OpenAI does not accept lifecycle hooks in a ZIP for the plugin directory",
     "skills": "the published ChatGPT version has no skills, and this script does not check "
@@ -98,7 +102,7 @@ class Package:
     def __init__(self, root):
         self.root = Path(root).resolve()
         self.manifest = {}
-        self.files = {MANIFEST}
+        self.files = {MANIFEST: MANIFEST}  # ZIP entry name -> source file in the plugin folder
         self.errors = []
 
     def error(self, message):
@@ -272,7 +276,7 @@ def check_icon(pkg, value, where):
         pkg.error(f"{where} must be at least 48x48, it is {width}x{height}")
     elif width > 4096:
         pkg.error(f"{where} is {width}x{height}, the limit is 4096 pixels on either side")
-    pkg.files.add(rel.as_posix())
+    pkg.files[rel.as_posix()] = rel.as_posix()
 
 
 # --- manifest sections -----------------------------------------------------------
@@ -297,6 +301,39 @@ def check_identity(pkg, m):
         check_text(pkg, author, "email", "author.", 320, required=False)
         if author.get("url") is not None:
             check_url(pkg, author["url"], "author.url", 2048)
+
+
+def check_mcp(pkg, m):
+    # OpenAI refuses an upload that drops the plugin's MCP server ("Removing the MCP
+    # isn't supported"), and the declaration must keep the server it already has.
+    if m.get("mcpServers") != "./.mcp.json":
+        pkg.error(f"mcpServers must be \"./.mcp.json\", because OpenAI refuses an upload that drops the "
+                  f"plugin's MCP server, got {m.get('mcpServers')!r}")
+        return
+    rel = package_file(pkg, "./" + MCP_SOURCE, "the MCP declaration")
+    if rel is None:
+        return
+    try:
+        config = json.loads((pkg.root / rel).read_bytes().decode("utf-8"))
+    except (OSError, ValueError) as exc:
+        pkg.error(f"{MCP_SOURCE} must be UTF-8 JSON: {exc.__class__.__name__}")
+        return
+    servers = config.get("mcpServers") if isinstance(config, dict) else None
+    if not isinstance(config, dict) or set(config) != {"mcpServers"} or not isinstance(servers, dict) \
+            or len(servers) != 1:
+        pkg.error(f'{MCP_SOURCE} must hold {{"mcpServers": {{"<name>": {{"url": "{MCP_URL}"}}}}}} '
+                  "with exactly one server")
+        return
+    (name, server), = servers.items()
+    if not name.strip() or bad_character(name, False):
+        pkg.error(f"{MCP_SOURCE}: the server name must be non-empty text, got {name!r}")
+    elif not isinstance(server, dict) or set(server) != {"url"}:
+        pkg.error(f"{MCP_SOURCE}: the server {name!r} must hold only a url")
+    elif server["url"] != MCP_URL:
+        pkg.error(f"{MCP_SOURCE}: the url must stay {MCP_URL}, because the update flow cannot change "
+                  f"an MCP server URL, got {server['url']!r}")
+    else:
+        pkg.files[".mcp.json"] = rel.as_posix()
 
 
 def check_shared_version(pkg, version):
@@ -420,6 +457,7 @@ def validate(pkg):
     # such as test_credentials is refused wherever it appears.
     check_fields(pkg, manifest, TOP_LEVEL_FIELDS, "")
     check_identity(pkg, manifest)
+    check_mcp(pkg, manifest)
     check_interface(pkg, manifest)
     check_extensions(pkg, manifest)
     folded = {}
@@ -442,12 +480,12 @@ def build(pkg, out_dir, uncommitted=False):
     partial = target.with_name(target.name + ".partial")
     try:
         with zipfile.ZipFile(partial, "w") as archive:
-            for rel in sorted(pkg.files):
-                info = zipfile.ZipInfo(rel, date_time=ZIP_DATE)
+            for name in sorted(pkg.files):
+                info = zipfile.ZipInfo(name, date_time=ZIP_DATE)
                 info.create_system = 3  # Unix, so the file mode below is kept
                 info.external_attr = ZIP_MODE << 16
                 info.compress_type = zipfile.ZIP_DEFLATED
-                archive.writestr(info, (pkg.root / rel).read_bytes())
+                archive.writestr(info, (pkg.root / pkg.files[name]).read_bytes())
         partial.replace(target)
     except BaseException:
         partial.unlink(missing_ok=True)
@@ -475,7 +513,7 @@ def uncommitted(pkg):
         lines = exc.stderr.decode("utf-8", "replace").strip().splitlines()
         return [], [], lines[0] if lines else "git rev-parse failed"
     changed, line_endings = [], []
-    for rel in sorted(pkg.files):
+    for rel in sorted(set(pkg.files.values())):
         try:
             path = (pkg.root / rel).relative_to(REPO_ROOT).as_posix()
         except ValueError:
@@ -551,8 +589,8 @@ def main(argv=None):
     print(f"built {target}")
     # Another zlib (such as zlib-ng) writes other bytes from the same files.
     print(f"  {target.stat().st_size} bytes, sha256 {digest}, zlib {zlib.ZLIB_RUNTIME_VERSION}, {source}")
-    for rel in sorted(pkg.files):
-        print(f"  {rel}")
+    for name in sorted(pkg.files):
+        print(f"  {name}" + (f" (from {pkg.files[name]})" if pkg.files[name] != name else ""))
     return 0
 
 

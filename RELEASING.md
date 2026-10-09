@@ -33,12 +33,14 @@ sure to follow a new version. Check the other rows after you publish.
 
 ## ChatGPT plugin directory
 
-The package is `.codex-plugin/plugin.json` plus the icon it references. Like OpenAI's export of
-version 1.0.0, it declares no MCP server and no skills. The server is connected in the OpenAI
-dashboard, not declared in the package. The update flow cannot change an MCP server URL, and the
-shared `.mcp.json` uses Claude's format, which OpenAI rejects. No OpenAI doc says what an upload
-without MCP configuration does to that connection, so step 5 checks it. `scripts/testdata/openai-1.0.0-plugin.json` keeps the
-1.0.0 export, and with classic zlib the build reproduces OpenAI's 1.0.0 ZIP from it byte for byte.
+The package is `.codex-plugin/plugin.json`, the icon it references, and the declaration of the
+plugin's MCP server. OpenAI refuses an upload that drops the server ("Removing the MCP isn't
+supported"), so the manifest sets `mcpServers` to `./.mcp.json`. The root `.mcp.json` in this folder
+belongs to the Claude plugin and uses Claude's format, which OpenAI rejects, so the build packs
+`.codex-plugin/mcp.json` as the ZIP's `.mcp.json`. That declaration must keep the server URL,
+because the update flow cannot change it. The package declares no skills.
+`scripts/testdata/openai-1.0.0-plugin.json` keeps OpenAI's export of 1.0.0, which had no MCP
+declaration, and with classic zlib the build reproduces that ZIP from it byte for byte.
 
 1. Edit `plugins/intuizi/.codex-plugin/plugin.json`. Keep `name`: OpenAI assigned it, and an update
    must keep it.
@@ -49,12 +51,14 @@ without MCP configuration does to that connection, so step 5 checks it. `scripts
    attaches it to the run. Merge once it passes.
 4. On `main`, run `python3 scripts/build-openai-zip.py`. It checks the manifest against OpenAI's
    package rules, refuses files that differ from the commit, and writes
-   `dist/app-6ab5004a37dc81918472cf526729e745-<version>.zip`, which holds the manifest and the icon,
-   nothing else. The sha256 it prints must match the build log of the CI run for that commit, which
-   uses classic zlib. A Python linked to zlib-ng writes other bytes from the same files, so the build
-   prints its zlib version. Then tag the commit with the version, so the tag pins the exact ZIP.
+   `dist/app-6ab5004a37dc81918472cf526729e745-<version>.zip`, which holds the manifest, the icon,
+   and the MCP declaration, nothing else. The sha256 it prints must match the build log of the CI
+   run for that commit, which uses classic zlib. A Python linked to zlib-ng writes other bytes from
+   the same files, so the build prints its zlib version.
 5. In the OpenAI dashboard, open the plugin, choose **Upload plugin to make changes**, and upload
-   that ZIP. Check that **MCPs** still shows the connected server and its tools. If it does not, do
+   that ZIP. If the upload check refuses it, no version is created: fix the package in a new pull
+   request. Once the upload is accepted, tag the commit with the version, so the tag pins the
+   exact ZIP. Check that **MCPs** still shows the connected server and its tools. If it does not, do
    not submit, and contact OpenAI support with the plugin ID,
    `plugin_asdk_app_6ab5004a37dc81918472cf526729e745`. Resolve the required setup and validation
    errors. Other findings, such as held tool updates, can go to the review team. Then submit the
