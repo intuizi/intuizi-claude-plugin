@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "intuizi": {
+      "url": "https://console.intuizi.com/api/v2/mcp"
+    }
+  }
+}

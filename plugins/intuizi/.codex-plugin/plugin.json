@@ -29,6 +29,7 @@
     "termsOfServiceURL": "https://www.intuizi.com/legal/terms-and-conditions/",
     "websiteURL": "https://www.intuizi.com"
   },
+  "mcpServers": "./.mcp.json",
   "name": "app-6ab5004a37dc81918472cf526729e745",
   "version": "1.0.2"
 }

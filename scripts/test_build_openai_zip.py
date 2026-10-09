@@ -50,11 +50,14 @@ def png(width, height, pixels=None, interlace=0):
             + chunk(b"IEND", b""))
 
 
+MCP_DECLARATION = json.dumps({"mcpServers": {"intuizi": {"url": B.MCP_URL}}}, indent=2) + "\n"
+
 VALID = {
     "name": B.PUBLISHED_NAME,
     "version": "2.3.4",
     "description": "Connects ChatGPT to a test service.",
     "author": {"name": "Intuizi, Inc."},
+    "mcpServers": "./.mcp.json",
     "interface": {
         "displayName": "Intuizi",
         "shortDescription": "Build and activate audiences",
@@ -82,7 +85,8 @@ class BuildOpenAIZipTest(unittest.TestCase):
         # The Claude files sit beside the package, as they do in plugins/intuizi.
         for rel, text in {
             ".claude-plugin/plugin.json": json.dumps({"name": "intuizi", "version": VALID["version"]}),
-            ".mcp.json": json.dumps({"intuizi": {"type": "http", "url": "https://example.com/mcp"}}),
+            ".mcp.json": json.dumps({"intuizi": {"type": "http", "url": B.MCP_URL}}),
+            B.MCP_SOURCE: MCP_DECLARATION,
             "README.md": "Claude plugin readme",
             "skills/demo/SKILL.md": "---\nname: demo\ndescription: A demo skill.\n---\nDo the demo.\n",
         }.items():
@@ -118,10 +122,33 @@ class BuildOpenAIZipTest(unittest.TestCase):
 
     # --- the package ---------------------------------------------------------
 
-    def test_valid_package_packs_the_manifest_and_icons_only(self):
+    def test_valid_package_packs_the_manifest_icon_and_mcp_declaration_only(self):
         pkg = self.check()
         self.assertEqual(pkg.errors, [])
-        self.assertEqual(pkg.files, {B.MANIFEST, "assets/icon.png"})
+        self.assertEqual(pkg.files, {B.MANIFEST: B.MANIFEST, "assets/icon.png": "assets/icon.png",
+                                     ".mcp.json": B.MCP_SOURCE})
+
+    def test_zip_carries_the_openai_mcp_declaration_not_claudes(self):
+        target = B.build(self.check(), self.tmp / "out")
+        with zipfile.ZipFile(target) as archive:
+            self.assertEqual(archive.read(".mcp.json").decode("utf-8"), MCP_DECLARATION)
+
+    def test_mcp_declaration(self):
+        source = self.root / B.MCP_SOURCE
+        self.assert_error(self.check(lambda m: m.pop("mcpServers")), "drops the plugin's MCP server")
+        self.assert_error(self.check(lambda m: m.update(mcpServers="./mcp.json")), "drops the plugin's MCP server")
+        for config, fragment in (({"intuizi": {"url": B.MCP_URL}}, "exactly one server"),
+                                 ({"mcpServers": {"a": {"url": B.MCP_URL}, "b": {"url": B.MCP_URL}}}, "exactly one"),
+                                 ({"mcpServers": {"intuizi": {"type": "http", "url": B.MCP_URL}}}, "only a url"),
+                                 ({"mcpServers": {"intuizi": {"url": "https://example.com/mcp"}}}, "must stay"),
+                                 ({"mcpServers": {" ": {"url": B.MCP_URL}}}, "server name")):
+            with self.subTest(config=config):
+                source.write_text(json.dumps(config), encoding="utf-8")
+                self.assert_error(self.check(), fragment)
+        source.write_bytes(b"\xff")
+        self.assert_error(self.check(), "UTF-8 JSON")
+        source.unlink()
+        self.assert_error(self.check(), "does not exist")
 
     def test_live_package_is_valid(self):
         pkg = B.Package(B.PLUGIN_ROOT)
@@ -158,7 +185,7 @@ class BuildOpenAIZipTest(unittest.TestCase):
 
     def test_failed_build_leaves_no_partial_zip(self):
         pkg = self.check()
-        pkg.files.add("assets/missing.png")
+        pkg.files["assets/missing.png"] = "assets/missing.png"
         out = self.tmp / "out"
         with self.assertRaises(FileNotFoundError):
             B.build(pkg, out)
@@ -272,7 +299,7 @@ class BuildOpenAIZipTest(unittest.TestCase):
         self.assert_error(self.check(self.ui(composerIcon="./assets/Icon.png")), "differ only in case")
 
     def test_refused_fields(self):
-        for key in ("mcpServers", "apps", "hooks", "skills"):
+        for key in ("apps", "hooks", "skills"):
             with self.subTest(key=key):
                 self.assert_error(self.check(lambda m: m.update({key: "./x"})), key + ":")
         self.assert_error(self.check(self.ui(screenshots=["./assets/icon.png"])), "screenshots_not_allowed")
@@ -329,6 +356,7 @@ class MainTest(unittest.TestCase):
         for rel, data in {
             B.MANIFEST: (json.dumps(VALID, indent=2) + "\n").encode("utf-8"),
             B.CLAUDE_MANIFEST: json.dumps({"name": "intuizi", "version": VALID["version"]}).encode("utf-8"),
+            B.MCP_SOURCE: MCP_DECLARATION.encode("utf-8"),
             "assets/icon.png": png(64, 64),
         }.items():
             (self.plugin / rel).parent.mkdir(parents=True, exist_ok=True)
