@@ -36,8 +36,8 @@ sure to follow a new version. Check the other rows after you publish.
 The package is `.codex-plugin/plugin.json` plus the icon it references. Like OpenAI's export of
 version 1.0.0, it declares no MCP server and no skills. The server is connected in the OpenAI
 dashboard, not declared in the package. The update flow cannot change an MCP server URL, and the
-shared `.mcp.json` uses Claude's format. No OpenAI doc says what an upload without MCP configuration
-does to that connection, so step 5 checks it. `scripts/testdata/openai-1.0.0-plugin.json` keeps the
+shared `.mcp.json` uses Claude's format, which OpenAI rejects. No OpenAI doc says what an upload
+without MCP configuration does to that connection, so step 5 checks it. `scripts/testdata/openai-1.0.0-plugin.json` keeps the
 1.0.0 export, and with classic zlib the build reproduces OpenAI's 1.0.0 ZIP from it byte for byte.
 
 1. Edit `plugins/intuizi/.codex-plugin/plugin.json`. Keep `name`: OpenAI assigned it, and an update
@@ -50,8 +50,8 @@ does to that connection, so step 5 checks it. `scripts/testdata/openai-1.0.0-plu
 4. On `main`, run `python3 scripts/build-openai-zip.py`. It checks the manifest against OpenAI's
    package rules, refuses files that differ from the commit, and writes
    `dist/app-6ab5004a37dc81918472cf526729e745-<version>.zip`, which holds the manifest and the icon,
-   nothing else. The sha256 it prints must match the build log of the CI run for that commit. Both
-   use classic zlib. A Python linked to zlib-ng writes other bytes from the same files, so the build
+   nothing else. The sha256 it prints must match the build log of the CI run for that commit, which
+   uses classic zlib. A Python linked to zlib-ng writes other bytes from the same files, so the build
    prints its zlib version. Then tag the commit with the version, so the tag pins the exact ZIP.
 5. In the OpenAI dashboard, open the plugin, choose **Upload plugin to make changes**, and upload
    that ZIP. Check that **MCPs** still shows the connected server and its tools. If it does not, do

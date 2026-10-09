@@ -426,11 +426,23 @@ class MainTest(unittest.TestCase):
         self.assertTrue(self.release_zip(uncommitted=True).exists())
         self.assertFalse(self.release_zip().exists())
 
-    def test_failed_allow_dirty_run_keeps_the_release_zip(self):
+    def test_failed_allow_dirty_run_removes_only_its_own_zip(self):
         self.assertEqual(self.run_main()[0], 0)
+        self.edit_manifest(b"First test release.", b"Edited release.")
+        self.assertEqual(self.run_main("--allow-dirty")[0], 0)
         self.edit_manifest(b'"Data & Analytics"', b'"Analytics"')
         self.assertEqual(self.run_main("--allow-dirty")[0], 1)
         self.assertTrue(self.release_zip().exists())
+        self.assertFalse(self.release_zip(uncommitted=True).exists())
+
+    def test_failed_release_run_removes_both_zips(self):
+        self.assertEqual(self.run_main()[0], 0)
+        self.edit_manifest(b"First test release.", b"Edited release.")
+        self.assertEqual(self.run_main("--allow-dirty")[0], 0)
+        self.edit_manifest(b'"Data & Analytics"', b'"Analytics"')
+        self.assertEqual(self.run_main()[0], 1)
+        self.assertFalse(self.release_zip().exists())
+        self.assertFalse(self.release_zip(uncommitted=True).exists())
 
 
 if __name__ == "__main__":
