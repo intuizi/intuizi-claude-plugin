@@ -1,0 +1,4 @@
+# Keep LF line endings on every checkout, so the files in a ChatGPT plugin ZIP
+# match the committed bytes on any operating system.
+* text=auto eol=lf
+*.png binary

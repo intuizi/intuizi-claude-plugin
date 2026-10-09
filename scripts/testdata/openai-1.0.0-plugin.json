@@ -1,0 +1,25 @@
+{
+  "author": {
+    "name": "Intuizi, Inc."
+  },
+  "description": "Intuizi connects ChatGPT to the Intuizi data platform, where marketing teams turn de-identified signal data into audiences and deliver them to their marketing destinations. The plugin queries the Large Behavioral Model, Intuizi's flagship LQM, trained on de-identified, real-world behavioral signal. Responses include counts, statuses, and metadata. Audience data never enters the chat and is sent only to destinations configured in the Intuizi console.\n\nWhat you can do:\n- Look up reference catalogs: POI categories and brands, apps, web domains, CTV channels, Transactions merchants, demographic and profile attributes, countries, and signal providers.\n- Estimate how large an audience would be before you build it, then create audiences from POI visits, app usage, web domains, CTV viewing, Transactions, demographics, profile attributes, home location, or your own cohorts, alone or combined with AND, OR, and NOT IN.\n- Grow a completed audience with a lookalike model and follow the model run.\n- Preview a frequency range, then activate the audience to a delivery destination your team has already set up in the Intuizi console.\n- Create cohorts from your own files or from an existing audience, and manage projects, POI categories, brands, and location submissions.\n- Check your organization's data-scan usage against its limits.\n\nEvery tool wraps a documented Intuizi API v2 endpoint, so validation, permissions, and rate limits match the API exactly. Read-only tools are marked read-only and delete tools are marked destructive. You need an Intuizi console account: connect with one-click OAuth, approve access in your browser, and the plugin sees only the projects and data your account can see.",
+  "interface": {
+    "capabilities": [],
+    "category": "Data & Analytics",
+    "defaultPrompt": [
+      "How big would an audience of Starbucks visitors in California over the last 30 days be?",
+      "What is the status of my most recent Intuizi audience?",
+      "Preview activating my Coffee Lovers audience at a frequency of 3 to 10"
+    ],
+    "developerName": "Intuizi, Inc.",
+    "displayName": "Intuizi",
+    "longDescription": "Intuizi connects ChatGPT to the Intuizi data platform, where marketing teams turn de-identified signal data into audiences and deliver them to their marketing destinations. The plugin queries the Large Behavioral Model, Intuizi's flagship LQM, trained on de-identified, real-world behavioral signal. Responses include counts, statuses, and metadata. Audience data never enters the chat and is sent only to destinations configured in the Intuizi console.\n\nWhat you can do:\n- Look up reference catalogs: POI categories and brands, apps, web domains, CTV channels, Transactions merchants, demographic and profile attributes, countries, and signal providers.\n- Estimate how large an audience would be before you build it, then create audiences from POI visits, app usage, web domains, CTV viewing, Transactions, demographics, profile attributes, home location, or your own cohorts, alone or combined with AND, OR, and NOT IN.\n- Grow a completed audience with a lookalike model and follow the model run.\n- Preview a frequency range, then activate the audience to a delivery destination your team has already set up in the Intuizi console.\n- Create cohorts from your own files or from an existing audience, and manage projects, POI categories, brands, and location submissions.\n- Check your organization's data-scan usage against its limits.\n\nEvery tool wraps a documented Intuizi API v2 endpoint, so validation, permissions, and rate limits match the API exactly. Read-only tools are marked read-only and delete tools are marked destructive. You need an Intuizi console account: connect with one-click OAuth, approve access in your browser, and the plugin sees only the projects and data your account can see.",
+    "privacyPolicyURL": "https://www.intuizi.com/private-policy/",
+    "shortDescription": "Build and activate audiences",
+    "supportURL": "https://www.intuizi.com/contact-us/",
+    "termsOfServiceURL": "https://www.intuizi.com/terms/",
+    "websiteURL": "https://www.intuizi.com"
+  },
+  "name": "app-6ab5004a37dc81918472cf526729e745",
+  "version": "1.0.0"
+}
