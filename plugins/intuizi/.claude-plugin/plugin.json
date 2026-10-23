@@ -2,7 +2,7 @@
   "name": "intuizi",
   "displayName": "Intuizi",
   "description": "Query the Large Behavioral Model, Intuizi's flagship large quantitative model (LQM), trained on de-identified, real-world behavioral signals. Build, size and deliver audiences to your marketing destinations.",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": {
     "name": "Intuizi, Inc.",
     "email": "support@intuizi.com",

@@ -6,7 +6,7 @@
   "extensions": {
     "com.openai": {
       "publication": {
-        "release_notes": "Links the listing to the new support, privacy policy, and terms of service pages on www.intuizi.com. Adds the Intuizi icon to the plugin package, shortens the package summary to fit the 1,024-character limit, and replaces a starter prompt that named a sample audience."
+        "release_notes": "No change to this package. Version 1.0.3 updates the audience skill of the Claude plugin, which this package does not include, so both listings keep one version."
       }
     }
   },
@@ -31,5 +31,5 @@
   },
   "mcpServers": "./.mcp.json",
   "name": "app-6ab5004a37dc81918472cf526729e745",
-  "version": "1.0.2"
+  "version": "1.0.3"
 }

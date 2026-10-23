@@ -6,8 +6,8 @@ description: Use when working with Intuizi audiences, cohorts or activations - b
 # Building and activating Intuizi audiences
 
 Intuizi work is asynchronous and metered. A build consumes the organization's data-scan
-allowance, and an activation delivers real data to a partner destination, so the order of
-operations and the confirmation points matter.
+allowance, and in an organization billed in credits it costs credits. An activation delivers real
+data to a partner destination. So the order of operations and the confirmation points matter.
 
 ## The sequence
 
@@ -18,13 +18,19 @@ operations and the confirmation points matter.
    `create_audience`, runs the same pipeline and creates nothing. Poll
    `get_audience_estimate` until the status is `completed`, `blocked` or `failed`. A `blocked`
    result explains why, often a date window outside coverage.
-3. **Confirm, then build.** Report the estimate and ask the user before calling
-   `create_audience`. Then poll `get_audience` until `data[0].status.id` is `104` (Completed),
-   the only terminal success state.
-4. **Preview before activating.** `preview_activation` returns the exact count a frequency range
+3. **Quote the price when the organization is billed in credits.** The tools list then includes
+   `quote_audience`. Call it with the exact body you will send to `create_audience`: it validates
+   the same way, creates nothing and is free. `data[0].credits` is the price and
+   `data[0].available_after` the credits left after the run. `quote_lookalike_audience` does the
+   same for `create_lookalike_audience`. Without these tools the organization is not billed in
+   credits, so skip this step.
+4. **Confirm, then build.** Report the estimate, and the price when there is one, and ask the user
+   before calling `create_audience`. Then poll `get_audience` until `data[0].status.id` is `104`
+   (Completed), the only terminal success state.
+5. **Preview before activating.** `preview_activation` returns the exact count a frequency range
    keeps, plus a `filter_hash`. Pass that hash with `freq_limit: true` to `create_activation` to
    activate exactly the previewed range.
-5. **Confirm, then activate.** Ask the user before calling `create_activation`. Delivered data
+6. **Confirm, then activate.** Ask the user before calling `create_activation`. Delivered data
    lands at the destination configured on the endpoint connection; the API returns no delivery URI.
 
 ## Things that trip agents up
@@ -36,7 +42,10 @@ operations and the confirmation points matter.
 - **A lookalike seed must be completed, non-lookalike and large enough** (1,000 devices by
   default). `cancel_lookalike` stops a run that is still going.
 - **Check `get_usage` before a large build** if the organization is near its data-scan limit; a
-  build is refused once the limit is reached.
+  build is refused once the limit is reached. In an organization billed in credits, its `credits`
+  block also shows the credits left.
+- **A failed, cancelled or empty run gets its credits back.** `credits_charged` on `get_audience`
+  shows what a run cost after any refund.
 - **Rate limits are 120 reads and 30 writes per minute.** On HTTP 429, respect `Retry-After`.
 - **Deletes are permanent.** `delete_audience`, `delete_activation`, `delete_cohort` and
   `delete_poi_submission` are annotated destructive for a reason; always confirm first.

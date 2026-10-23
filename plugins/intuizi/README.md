@@ -8,7 +8,8 @@ their marketing destinations.
 ## What you get
 
 28 tools wrapping the Intuizi API v2, plus 20 read-only reference documents the assistant can
-consult on its own:
+consult on its own. An organization billed in credits gets two more, which quote the price of a
+build before it runs:
 
 - **Reference lookups** for POI categories and brands, apps, web domains, CTV channels,
   Transactions merchants, demographic and profile attributes, countries and signal providers.

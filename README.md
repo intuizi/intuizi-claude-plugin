@@ -19,7 +19,8 @@ OAuth 2.1 with PKCE, so no key is pasted anywhere.
 
 - The Intuizi MCP server (`https://console.intuizi.com/api/v2/mcp`): 28 tools covering reference
   lookups, audience estimates and builds, lookalike models, cohorts, activations and usage, plus
-  20 read-only reference documents the assistant can consult on its own.
+  20 read-only reference documents the assistant can consult on its own. An organization billed
+  in credits also gets two tools that quote the price of a build before it runs.
 - A skill that teaches the right order of operations and the points where you should be asked to
   confirm, because builds are metered and activations deliver real data.
 
