@@ -16,13 +16,13 @@ data to a partner destination. So the order of operations and the confirmation p
    `tools/list` if unsure which dataset and catalog pair to use.
 2. **Size before building with `estimate_audience_size`.** It takes the same body as
    `create_audience` and creates nothing. Read its response before you poll: it may already hold
-   the finished estimate (`data[0].status` `completed`, `data[0].estimate.method` `sketch`, and
-   `data[0].estimate.as_of` for when its data was read), and then there is nothing to poll. Call
-   `get_audience_estimate` with `data[0].id` only while the status is `pending` or `processing`,
-   and repeat until it is `completed`, `blocked` or `failed`. If it still answers `pending` after
-   about 8 calls (about 2 minutes), stop, tell the user the estimate is still running, give them
-   `data[0].id` and read it again later. A `blocked` result explains why, often a date window
-   outside coverage.
+   the finished estimate (`data[0].status` `completed`, figures in `data[0].estimate`), and then
+   there is nothing to poll. A fast answer has `method` `sketch` and `as_of` for when its data was
+   read. Call `get_audience_estimate` with `data[0].id` only while the status is `pending` or
+   `processing`, in the same turn, and repeat until it is `completed`, `blocked` or `failed`. If it
+   still answers `pending` after about 8 calls (about 2 minutes), stop, tell the user the estimate
+   is still running, give them `data[0].id` and read it again later. A `blocked` result explains
+   why, often a date window outside coverage.
 3. **Quote the price when the organization is billed in credits.** The tools list then includes
    `quote_audience`. Call it with the exact body you will send to `create_audience`: it validates
    the same way, creates nothing and is free. `data[0].credits` is the price and
@@ -45,8 +45,8 @@ data to a partner destination. So the order of operations and the confirmation p
   usually comes back `completed` in the `estimate_audience_size` response itself: a fast answer.
   It does not count toward the build budget and is still metered on the bytes it reads. For a POI
   dataset a fast answer equals a full estimate run on the same data, and a full estimate run later
-  can differ a little as new data arrives. Any other estimate, and the few POI estimates that fall
-  back, is answered by a worker and can take minutes, for example AND, OR, NOTIN, and city, DMA or
+  can differ a little as new data arrives. Other estimates, and the few POI estimates that fall
+  back, are answered by a worker and can take minutes, for example AND, OR, NOTIN, and city, DMA or
   ZIP requests.
 - **The dataset named "Transactions" in the console is `affinity-transactions`** in reference
   lookups and `AffinityTransactions` as an audience type. The bare `Transactions` key is retired
