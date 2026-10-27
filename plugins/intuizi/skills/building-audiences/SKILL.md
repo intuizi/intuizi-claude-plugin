@@ -43,11 +43,18 @@ data to a partner destination. So the order of operations and the confirmation p
 - **Responses wrap data in a one-element array.** Read `data[0]`, not `data`.
 - **Only some estimates answer at once.** A single-dataset POI estimate at country or state level
   usually comes back `completed` in the `estimate_audience_size` response itself: a fast answer.
-  It does not count toward the build budget and is still metered on the bytes it reads. For a POI
-  dataset a fast answer equals a full estimate run on the same data, and a full estimate run later
-  can differ a little as new data arrives. Other estimates, and the few POI estimates that fall
-  back, are answered by a worker and can take minutes, for example AND, OR, NOTIN, and city, DMA or
-  ZIP requests.
+  A single-dataset Transactions (type `AffinityTransactions`) estimate by brands or categories,
+  optionally with states and channels, usually comes back at once too. So does a single-dataset
+  CTV estimate that filters only by countries, states, signal providers and vendors, or by up to 8
+  different channel names instead of vendors. A fast answer does not count toward the build budget
+  and is still metered on the bytes it reads. For a POI, Transactions or CTV dataset a fast answer
+  equals a full estimate run on the same data, and a full estimate run later can differ a little
+  as new data arrives. A fast Transactions answer leaves `transactions`, `amount`,
+  `online_transactions` and the four ratios (`avg_amount_per_scid`, `avg_transaction_value`,
+  `avg_transactions_per_scid` and `online_share`) `null` in `data[0].estimate.totals`, not `0`:
+  the sketches hold no amounts. Other estimates, and the few POI, Transactions and CTV estimates
+  that fall back, are answered by a worker and can take minutes, for example AND, OR, NOTIN, and
+  city, DMA or ZIP requests.
 - **The dataset named "Transactions" in the console is `affinity-transactions`** in reference
   lookups and `AffinityTransactions` as an audience type. The bare `Transactions` key is retired
   and rejected.
