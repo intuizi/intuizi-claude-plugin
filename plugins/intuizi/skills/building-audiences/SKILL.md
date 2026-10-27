@@ -45,8 +45,8 @@ data to a partner destination. So the order of operations and the confirmation p
   usually comes back `completed` in the `estimate_audience_size` response itself: a fast answer.
   A single-dataset Transactions (type `AffinityTransactions`) estimate by brands or categories,
   optionally with states and channels, usually comes back at once too. So does a single-dataset
-  CTV estimate that filters only by countries, states, signal providers and vendors, or by up to 8
-  different channel names instead of vendors. A fast answer does not count toward the build budget
+  CTV estimate that filters only by countries, states and signal providers, optionally with vendors
+  or with up to 8 different channel names. A fast answer does not count toward the build budget
   and is still metered on the bytes it reads. For a POI, Transactions or CTV dataset a fast answer
   equals a full estimate run on the same data, and a full estimate run later can differ a little
   as new data arrives. A fast Transactions answer leaves `transactions`, `amount`,
