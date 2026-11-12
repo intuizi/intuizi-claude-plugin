@@ -15,8 +15,10 @@ data to a partner destination. So the order of operations and the confirmation p
    apps, CTV channels, merchants and countries all come from reference catalogs. Call
    `tools/list` if unsure which dataset and catalog pair to use. For a SKUs dataset the keys
    come from `lookup_reference` with `dataset` `skus`: `catalog` `merchants` (one list, with an
-   optional `search`) and `catalog` `brands` (about 21,000 brands, paged, so pass `search` with
-   the brand name).
+   optional `search`), `catalog` `brands` (about 21,000 brands, paged, so pass `search` with
+   the brand name; `categories` narrows them), `catalog` `categories` (a tree: `search` finds a
+   name at any level, at most 100 rows; `parent_id` lists one level) and `catalog`
+   `device-values` (`field` `type`, `os`, `make` or `model`; at most 500 rows).
 2. **Size before building with `estimate_audience_size`.** It takes the same body as
    `create_audience` and creates nothing. Read its response before you poll: it may already hold
    the finished estimate (`data[0].status` `completed`, figures in `data[0].estimate`), and then
@@ -63,17 +65,26 @@ data to a partner destination. So the order of operations and the confirmation p
   lookups and `AffinityTransactions` as an audience type. The bare `Transactions` key is retired
   and rejected.
 - **A SKUs dataset (type `SKUs`) is online purchases at product level.** It holds the devices
-  seen on the home networks of online purchases of a product brand, or from a merchant, in a
-  period. The data comes from a panel of affiliate-tracked orders and is strongest at large US
-  retailers, and the devices are those seen on the home network the purchase click came from, so
-  an order with no tracked click adds no device. Treat its counts as a panel, not as a merchant's sales. It is available on request:
-  an organization without it reads both SKUs catalogs empty and gets a 422 on `type`.
-  - A block names `merchants` or `brands`, or both, and at least one of the two. The values of
-    one list are alternatives, and the two lists narrow each other: a brand with a merchant is
-    that brand bought from that merchant.
-  - Send each item's `value` (the key), never its `text`: a key is matched exactly, case
-    included. The SKUs `brands` are not the `affinity-transactions` brands: never use a value of
-    one catalog on the other type.
+  seen on the home networks of online purchases of a product brand or category, or from a
+  merchant, in a period. The data comes from a panel of affiliate-tracked orders and is
+  strongest at large US retailers, and the devices are those seen on the home network the
+  purchase click came from, so an order with no tracked click adds no device. Treat its counts
+  as a panel, not as a merchant's sales. It is available on request: an organization without it
+  reads every SKUs catalog empty and gets a 422 on `type`.
+  - A block names `merchants`, `brands` or `categories`, at least one of the three. The values
+    of one list are alternatives, and the lists narrow each other on the same order line: a
+    brand with a merchant is that brand bought from that merchant, and a brand with a category
+    is that brand bought in that category.
+  - Send each item's `value`, never its `text`: a value is matched exactly, case included.
+    `categories` takes integer ids, and the device values are upper case (`MOBILE`, `IOS`,
+    `APPLE`, `IPHONE`). The SKUs `brands` are not the `affinity-transactions` brands: never use
+    a value of one catalog on the other type.
+  - `categories` are the Google Product Taxonomy with finer levels, and a category includes
+    every category under it. Resolve a name with `search`, then send that row's `value`; a name
+    such as Accessories sits under several parents, so pick the row by its `path`.
+  - `device_types`, `device_oses`, `device_makes` and `device_models` filter the orders by the
+    device of the purchase click, with values from `catalog` `device-values`. The audience is
+    still every device seen on that home network.
   - `start_date` and `end_date` are the purchase dates. `location.countries` (ISO-3) and
     `location.states` are optional; without a country every country is read. It takes no
     `signal_providers`, and `location.cities`, `zipcodes` and `dmas` are rejected.
