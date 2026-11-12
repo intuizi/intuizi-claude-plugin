@@ -84,7 +84,7 @@ data to a partner destination. So the order of operations and the confirmation p
     Deidentified dataset, and add no additional analyses (`analyses`, `crossvisitation`,
     `crosspurchase`) and no `refine` (the Audience Modifier) to an audience with a SKUs dataset.
     These shapes are refused. A SKUs dataset can still be combined with one other dataset,
-    such as POI.
+    such as POI; with a Competitors dataset, put the Competitors dataset first.
 - **A lookalike seed must be completed, non-lookalike and large enough** (1,000 devices by
   default). `cancel_lookalike` stops a run that is still going.
 - **Check `get_usage` before a large build** if the organization is near its data-scan limit; a
