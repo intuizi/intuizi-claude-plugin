@@ -62,11 +62,11 @@ data to a partner destination. So the order of operations and the confirmation p
 - **The dataset named "Transactions" in the console is `affinity-transactions`** in reference
   lookups and `AffinityTransactions` as an audience type. The bare `Transactions` key is retired
   and rejected.
-- **A SKUs dataset (type `SKUs`) is online purchases at product level.** It holds the devices of
-  the households that bought a product brand, or bought from a merchant, in a period. The data
-  comes from a panel of affiliate-tracked orders and is strongest at large US retailers, and the
-  devices come from the household of the purchase click, so an order with no tracked click adds
-  no device. Treat its counts as a panel, not as a merchant's sales. It is available on request:
+- **A SKUs dataset (type `SKUs`) is online purchases at product level.** It holds the devices
+  seen on the home networks of online purchases of a product brand, or from a merchant, in a
+  period. The data comes from a panel of affiliate-tracked orders and is strongest at large US
+  retailers, and the devices are those seen on the home network the purchase click came from, so
+  an order with no tracked click adds no device. Treat its counts as a panel, not as a merchant's sales. It is available on request:
   an organization without it reads both SKUs catalogs empty and gets a 422 on `type`.
   - A block names `merchants` or `brands`, or both, and at least one of the two. The values of
     one list are alternatives, and the two lists narrow each other: a brand with a merchant is
@@ -77,9 +77,9 @@ data to a partner destination. So the order of operations and the confirmation p
   - `start_date` and `end_date` are the purchase dates. `location.countries` (ISO-3) and
     `location.states` are optional; without a country every country is read. It takes no
     `signal_providers`, and `location.cities`, `zipcodes` and `dmas` are rejected.
-  - `max_devices_per_ip` is the Match Strictness: how strictly a device must be tied to the
-    household of the purchase click, from `1` (Very Strict, fewest devices) to `5` (More Reach),
-    default `3` (Recommended). Leave it out unless the user asks for precision or reach.
+  - `max_devices_per_ip` is the Match Strictness: how closely a device must match the home
+    network of the purchase click, from `1` (Very Strict, fewest devices) to `5` (More Reach,
+    every device seen on that network), default `3` (Recommended). Leave it out unless the user asks for precision or reach.
   - Never combine a SKUs dataset with a Cohorts, Demographics, Origin, Connectivity or
     Deidentified dataset, and add no additional analyses (`analyses`, `crossvisitation`,
     `crosspurchase`) and no `refine` (the Audience Modifier) to an audience with a SKUs dataset.
