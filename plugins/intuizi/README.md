@@ -12,11 +12,12 @@ consult on its own. An organization billed in credits gets two more, which quote
 build before it runs:
 
 - **Reference lookups** for POI categories and brands, apps, web domains, CTV channels,
-  Transactions merchants, demographic and profile attributes, countries and signal providers.
+  Transactions merchants, SKUs merchants and product brands, demographic and profile attributes,
+  countries and signal providers.
 - **Audience estimates** that size an audience before you build it, creating nothing.
 - **Audience builds** from POI visits, app usage, web domains, CTV viewing, Transactions,
-  demographics, profile attributes, home location or your own cohorts, combined with AND, OR
-  and NOT IN.
+  SKUs (online purchases by product brand and merchant, on request), demographics, profile
+  attributes, home location or your own cohorts, combined with AND, OR and NOT IN.
 - **Lookalike models** to grow a completed audience.
 - **Cohorts** from your own files or from an existing audience.
 - **Activations** that deliver a completed audience to a destination configured in the

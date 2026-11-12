@@ -13,7 +13,10 @@ data to a partner destination. So the order of operations and the confirmation p
 
 1. **Resolve names to ids with `lookup_reference`.** Never guess an id. Brands, POI categories,
    apps, CTV channels, merchants and countries all come from reference catalogs. Call
-   `tools/list` if unsure which dataset and catalog pair to use.
+   `tools/list` if unsure which dataset and catalog pair to use. For a SKUs dataset the keys
+   come from `lookup_reference` with `dataset` `skus`: `catalog` `merchants` (one list, with an
+   optional `search`) and `catalog` `brands` (about 21,000 brands, paged, so pass `search` with
+   the brand name).
 2. **Size before building with `estimate_audience_size`.** It takes the same body as
    `create_audience` and creates nothing. Read its response before you poll: it may already hold
    the finished estimate (`data[0].status` `completed`, figures in `data[0].estimate`), and then
@@ -54,10 +57,34 @@ data to a partner destination. So the order of operations and the confirmation p
   `avg_transactions_per_scid` and `online_share`) `null` in `data[0].estimate.totals`, not `0`:
   the sketches hold no amounts. Other estimates, and the few POI, Transactions and CTV estimates
   that fall back, are answered by a worker and can take minutes, for example AND, OR, NOTIN, and
-  city, DMA or ZIP requests.
+  city, DMA or ZIP requests. A SKUs estimate is always answered by a worker, never a fast
+  answer: poll it with `get_audience_estimate` like any other worker estimate.
 - **The dataset named "Transactions" in the console is `affinity-transactions`** in reference
   lookups and `AffinityTransactions` as an audience type. The bare `Transactions` key is retired
   and rejected.
+- **A SKUs dataset (type `SKUs`) is online purchases at product level.** It holds the devices
+  seen on the home networks of online purchases of a product brand, or from a merchant, in a
+  period. The data comes from a panel of affiliate-tracked orders and is strongest at large US
+  retailers, and the devices are those seen on the home network the purchase click came from, so
+  an order with no tracked click adds no device. Treat its counts as a panel, not as a merchant's sales. It is available on request:
+  an organization without it reads both SKUs catalogs empty and gets a 422 on `type`.
+  - A block names `merchants` or `brands`, or both, and at least one of the two. The values of
+    one list are alternatives, and the two lists narrow each other: a brand with a merchant is
+    that brand bought from that merchant.
+  - Send each item's `value` (the key), never its `text`: a key is matched exactly, case
+    included. The SKUs `brands` are not the `affinity-transactions` brands: never use a value of
+    one catalog on the other type.
+  - `start_date` and `end_date` are the purchase dates. `location.countries` (ISO-3) and
+    `location.states` are optional; without a country every country is read. It takes no
+    `signal_providers`, and `location.cities`, `zipcodes` and `dmas` are rejected.
+  - `max_devices_per_ip` is the Match Strictness: how closely a device must match the home
+    network of the purchase click, from `1` (Very Strict, fewest devices) to `5` (More Reach,
+    every device seen on that network), default `3` (Recommended). Leave it out unless the user asks for precision or reach.
+  - Never combine a SKUs dataset with a Cohorts, Demographics, Origin, Connectivity or
+    Deidentified dataset, and add no additional analyses (`analyses`, `crossvisitation`,
+    `crosspurchase`) and no `refine` (the Audience Modifier) to an audience with a SKUs dataset.
+    These shapes are refused. A SKUs dataset can still be combined with one other dataset,
+    such as POI; with a Competitors dataset, put the Competitors dataset first.
 - **A lookalike seed must be completed, non-lookalike and large enough** (1,000 devices by
   default). `cancel_lookalike` stops a run that is still going.
 - **Check `get_usage` before a large build** if the organization is near its data-scan limit; a
