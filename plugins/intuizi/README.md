@@ -13,7 +13,8 @@ build before it runs:
 
 - **Reference lookups** for POI categories and brands, apps, web domains, CTV channels,
   Transactions merchants, SKUs merchants, product brands, product categories and purchase
-  devices, demographic and profile attributes, countries and signal providers.
+  devices, SKUs insights (what sells, by brand, merchant or category) and data coverage,
+  demographic and profile attributes, countries and signal providers.
 - **Audience estimates** that size an audience before you build it, creating nothing.
 - **Audience builds** from POI visits, app usage, web domains, CTV viewing, Transactions,
   SKUs (online purchases by product brand, product category and merchant, with item price,
