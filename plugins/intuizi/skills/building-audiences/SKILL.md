@@ -18,7 +18,11 @@ data to a partner destination. So the order of operations and the confirmation p
    optional `search`), `catalog` `brands` (about 21,000 brands, paged, so pass `search` with
    the brand name; `categories` narrows them), `catalog` `categories` (a tree: `search` finds a
    name at any level, at most 100 rows; `parent_id` lists one level) and `catalog`
-   `device-values` (`field` `type`, `os`, `make` or `model`; at most 500 rows).
+   `device-values` (`field` `type`, `os`, `make` or `model`; at most 500 rows). Two more SKUs
+   catalogs help before a build: `catalog` `insights` shows what sells (pass `dimension`
+   `brand`, `merchant`, `category` or `total`, and optionally `period` 7, 30 or 90, a
+   `category` id, a `merchant` key and `limit`): use it to pick brands, merchants or
+   categories with real volume. `catalog` `coverage` says which days the data covers.
 2. **Size before building with `estimate_audience_size`.** It takes the same body as
    `create_audience` and creates nothing. Read its response before you poll: it may already hold
    the finished estimate (`data[0].status` `completed`, figures in `data[0].estimate`), and then
@@ -94,6 +98,13 @@ data to a partner destination. So the order of operations and the confirmation p
     places, orders whole numbers from 1 to 1,000,000, and a minimum above its maximum is
     refused. A home network is the network of the purchase click, not a person: describe a
     result as "home networks that spent", never as people or households identified.
+  - Check `catalog` `coverage` before you pick dates: purchases start on `first_day`, the days
+    in `empty_days` and `thin_days` hold no or few purchases, purchases after `settled_day`
+    are still arriving, and a purchase after `newest_device_day` adds no device yet. Tell the
+    user when their dates touch any of these, because the audience will be smaller.
+  - Read `insights` figures as panel counts. Rows with fewer than 10 home networks or 10
+    orders are not listed, home networks and devices are approximate, and the shares of
+    brands can add up to more than 100% (an order with two brands counts under both).
   - `start_date` and `end_date` are the purchase dates. `location.countries` (ISO-3) and
     `location.states` are optional; without a country every country is read. It takes no
     `signal_providers`, and `location.cities`, `zipcodes` and `dmas` are rejected.
