@@ -16,7 +16,8 @@ build before it runs:
   devices, demographic and profile attributes, countries and signal providers.
 - **Audience estimates** that size an audience before you build it, creating nothing.
 - **Audience builds** from POI visits, app usage, web domains, CTV viewing, Transactions,
-  SKUs (online purchases by product brand, product category and merchant, on request),
+  SKUs (online purchases by product brand, product category and merchant, with item price,
+  spend, order and top-spender filters, on request),
   demographics, profile attributes, home location or your own cohorts, combined with AND, OR
   and NOT IN.
 - **Lookalike models** to grow a completed audience.
