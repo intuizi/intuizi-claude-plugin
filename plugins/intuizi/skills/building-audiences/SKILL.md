@@ -85,6 +85,15 @@ data to a partner destination. So the order of operations and the confirmation p
   - `device_types`, `device_oses`, `device_makes` and `device_models` filter the orders by the
     device of the purchase click, with values from `catalog` `device-values`. The audience is
     still every device seen on that home network.
+  - Spend filters, all optional: `item_price_min` / `item_price_max` keep order lines whose
+    item price (USD) is in range. `spend_min` / `spend_max` and `orders_min` / `orders_max`
+    keep home networks whose total spend (USD) or order count in the matching purchases over
+    the dates is in range. `spend_top_percent` (`50`, `25`, `10`, `5` or `1`) ranks every home
+    network with a matching purchase by spend and keeps that top share, ties kept; the bounds
+    then narrow the kept networks. Amounts are numbers from 0 to 1e9 with at most 6 decimal
+    places, orders whole numbers from 1 to 1,000,000, and a minimum above its maximum is
+    refused. A home network is the network of the purchase click, not a person: describe a
+    result as "home networks that spent", never as people or households identified.
   - `start_date` and `end_date` are the purchase dates. `location.countries` (ISO-3) and
     `location.states` are optional; without a country every country is read. It takes no
     `signal_providers`, and `location.cities`, `zipcodes` and `dmas` are rejected.
