@@ -52,7 +52,7 @@ data to a partner destination. So the order of operations and the confirmation p
 - **Responses wrap data in a one-element array.** Read `data[0]`, not `data`.
 - **Only some estimates answer at once.** A single-dataset POI estimate at country or state level
   usually comes back `completed` in the `estimate_audience_size` response itself: a fast answer.
-  A single-dataset Transactions (type `AffinityTransactions`) estimate by brands or categories,
+  A single-dataset Transactions (type `Transactions`) estimate by brands or categories,
   optionally with states and channels, usually comes back at once too. So does a single-dataset
   CTV estimate that filters only by countries, states and signal providers, optionally with vendors
   or with up to 8 different channel names. A fast answer does not count toward the build budget
@@ -65,9 +65,10 @@ data to a partner destination. So the order of operations and the confirmation p
   that fall back, are answered by a worker and can take minutes, for example AND, OR, NOTIN, and
   city, DMA or ZIP requests. A SKUs estimate is always answered by a worker, never a fast
   answer: poll it with `get_audience_estimate` like any other worker estimate.
-- **The dataset named "Transactions" in the console is `affinity-transactions`** in reference
-  lookups and `AffinityTransactions` as an audience type. The bare `Transactions` key is retired
-  and rejected.
+- **The Transactions dataset is type `Transactions`, reference group `transactions`.** Its
+  activation limits are `transactions_spend_limit` / `_min` / `_max` and `transactions_txn_limit` /
+  `_min` / `_max`. An audience built from the retired merchant-level dataset reads as type
+  `TransactionsLegacy`, which `create_audience` rejects.
 - **A SKUs dataset (type `SKUs`) is online purchases at product level.** It holds the devices
   seen on the home networks of online purchases of a product brand or category, or from a
   merchant, in a period. The data comes from a panel of affiliate-tracked orders and is
@@ -81,7 +82,7 @@ data to a partner destination. So the order of operations and the confirmation p
     is that brand bought in that category.
   - Send each item's `value`, never its `text`: a value is matched exactly, case included.
     `categories` takes integer ids, and the device values are upper case (`MOBILE`, `IOS`,
-    `APPLE`, `IPHONE`). The SKUs `brands` are not the `affinity-transactions` brands: never use
+    `APPLE`, `IPHONE`). The SKUs `brands` are not the `transactions` brands: never use
     a value of one catalog on the other type.
   - `categories` are the Google Product Taxonomy with finer levels, and a category includes
     every category under it. Resolve a name with `search`, then send that row's `value`; a name

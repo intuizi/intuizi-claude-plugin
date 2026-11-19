@@ -12,7 +12,7 @@ consult on its own. An organization billed in credits gets two more, which quote
 build before it runs:
 
 - **Reference lookups** for POI categories and brands, apps, web domains, CTV channels,
-  Transactions merchants, SKUs merchants, product brands, product categories and purchase
+  Transactions categories and brands, SKUs merchants, product brands, product categories and purchase
   devices, SKUs insights (what sells, by brand, merchant or category) and data coverage,
   demographic and profile attributes, countries and signal providers.
 - **Audience estimates** that size an audience before you build it, creating nothing.
